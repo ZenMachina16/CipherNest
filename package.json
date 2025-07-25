@@ -1,0 +1,40 @@
+{
+  "name": "ciphernest",
+  "version": "1.0.0",
+  "description": "CipherNest - Secure, Encrypted Communication Platform on the Internet Computer",
+  "scripts": {
+    "start": "dfx start --background",
+    "deploy": "dfx deploy",
+    "dev": "vite src/chat_frontend",
+    "build": "vite build src/chat_frontend",
+    "test": "dfx canister call chat_backend getMessages"
+  },
+  "dependencies": {
+    "@dfinity/agent": "^0.15.6",
+    "@dfinity/auth-client": "^0.15.6",
+    "@dfinity/candid": "^0.15.6",
+    "@dfinity/principal": "^0.15.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@chakra-ui/react": "^2.8.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "framer-motion": "^10.15.1",
+    "react-router-dom": "^6.14.2",
+    "react-icons": "^4.10.1",
+    "chart.js": "^4.3.2",
+    "react-chartjs-2": "^5.2.0",
+    "react-intersection-observer": "^9.5.2",
+    "@heroicons/react": "^2.0.18"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.4",
+    "buffer": "^6.0.3",
+    "process": "^0.11.10",
+    "vite": "^4.4.9"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  }
+}

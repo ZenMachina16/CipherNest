@@ -1,0 +1,21 @@
+type UserKeys = record {
+    publicKey: blob;
+    lastUpdated: int;
+};
+
+type Message = record {
+    from: principal;
+    encryptedContent: blob;
+    publicKey: blob;
+    timestamp: int;
+    expiresAt: int;
+};
+
+service : {
+    "setPublicKey": (publicKey: blob) -> ();
+    "getPublicKey": (user: principal) -> (opt blob) query;
+    "sendEncryptedMessage": (to: principal, encryptedContent: blob, publicKey: blob) -> ();
+    "getMessages": () -> (vec Message) query;
+    "deleteMessages": () -> ();
+    "getMessageCount": () -> (nat) query;
+}

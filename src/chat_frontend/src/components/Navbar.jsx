@@ -30,6 +30,34 @@ export default function Navbar({ isAuthenticated, onLogin, onLogout }) {
       position="fixed"
       w="100%"
       top={0}
+      zIndex={1000}
+      borderBottom={1}
+      borderStyle={'solid'}
+      borderColor={borderColor}
+    >
+      <Container maxW="container.xl">
+        <Flex h={16} alignItems="center" justifyContent="space-between">
+          <Flex alignItems="center">
+            <Image
+              src="/src/assets/logo.png"
+              alt="CipherNest Logo"
+              h="40px"
+              mr={3}
+            />
+      w="100%"
+      top={0}
+      zIndex={1000}>
+      <Container maxW="container.xl">
+        <Flex h={16} alignItems="center" justifyContent="space-between">
+          <Flex alignItems="center">
+            <Image
+              src="/src/assets/logo.png"
+              alt="CipherNest Logo"
+              h="40px"
+              mr={3}
+            />
+      w="100%"
+      top={0}
       zIndex={100}
       borderBottom={1}
       borderStyle={'solid'}

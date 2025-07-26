@@ -28,6 +28,15 @@ export default function Hero({ onGetStarted }) {
         align={'center'}
         spacing={{ base: 8, md: 10 }}
         py={{ base: 20, md: 28 }}
+        direction={{ base: 'column', md: 'row' }}>
+        <Stack flex={1} spacing={{ base: 5, md: 10 }}>
+          <Image
+            src="/src/assets/logo.png"
+            alt="CipherNest Logo"
+            width={{ base: "200px", md: "300px" }}
+            mb={6}
+            alignSelf="center"
+          />
         direction={{ base: 'column', md: 'row' }}
         ref={ref}
       >

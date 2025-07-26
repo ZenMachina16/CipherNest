@@ -1,6 +1,5 @@
 # CipherNest
 
-![CipherNest Logo](src/chat_frontend/src/assets/logo.png)
 
 A secure, decentralized messaging platform built on the Internet Computer Protocol, featuring end-to-end encryption, automatic message expiration, and blockchain-powered security.
 

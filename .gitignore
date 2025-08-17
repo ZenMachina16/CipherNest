@@ -1,11 +1,49 @@
-# Rust
-/target
+
+## Rust
+target/
 **/*.rs.bk
+Cargo.lock
 
-# Node
-/node_modules
-/.next
-/dist
+## Node / Frontend
+node_modules/
+/src/chat_frontend/.next/
+/src/chat_frontend/.turbo/
+/src/chat_frontend/dist/
+/src/chat_frontend/out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
 
-# DFX
-/dfx
+## DFX / Internet Computer
+.dfx/
+/dfx/
+/*.wasm
+
+## Build outputs
+**/*.wasm
+**/*.wasm.d
+
+## Editor directories and files
+.vscode/
+.idea/
+*.sublime-workspace
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Environment / secrets
+.env
+.env.*
+secrets/
+
+## Logs
+*.log
+logs/
+
+## Misc
+*.orig
+*.rej
+*.swp
+*.lock

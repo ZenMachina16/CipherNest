@@ -1,0 +1,49 @@
+# Next.js build output
+.next/
+.out/
+.dist/
+
+# Node
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+.env.*
+
+# Vercel
+.vercel/
+
+# Turborepo/cache
+.turbo/
+
+# Coverage
+coverage/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Build
+dist/
+build/
+
+# Misc
+*.log

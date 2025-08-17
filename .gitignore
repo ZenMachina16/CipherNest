@@ -1,40 +1,11 @@
-# Internet Computer
-.dfx/
-.azle/
-canister_ids.json
+# Rust
+/target
+**/*.rs.bk
 
-# Dependencies
-node_modules/
-dist/
-.env
+# Node
+/node_modules
+/.next
+/dist
 
-# Build outputs
-build/
-out/
-HACK_BECAUSE_OF_ALLOW_JS/
-
-# IDE and Editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-.DS_Store
-
-# Debug logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Local environment files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Testing
-coverage/
-
-# Misc
-.cache/
-.temp/
-*.log
+# DFX
+/dfx

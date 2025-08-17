@@ -1,0 +1,38 @@
+[package]
+name = "chat_backend"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# Internet Computer canister runtime & macros
+ic-cdk = { version = "0.8", features = ["macros"] }
+ic-cdk-macros = "0.3"
+
+# Stable memory helpers
+ic-stable-structures = "0.6"
+
+# Candid interface and (de)serialization
+candid = "0.11"
+
+# Serde for JSON (de)serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Optional / experimental post-quantum crypto crates.
+# These are placeholders; pick the specific crate or FFI binding you intend to use.
+# - `pqcrypto` crates provide specific algorithm implementations (Kyber/Dilithium).
+# - `oqs` or `liboqs-sys` provide bindings to liboqs when available.
+
+pqcrypto-kyber = { version = "0.7", optional = true }
+pqcrypto-dilithium = { version = "0.7", optional = true }
+oqs = { version = "0.7", optional = true }
+
+[features]
+# Enable PQC algorithm crates when needed
+default = []
+pqcrypto = ["pqcrypto-kyber", "pqcrypto-dilithium"]
+liboqs = ["oqs"]
+

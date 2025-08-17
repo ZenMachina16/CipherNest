@@ -1,0 +1,54 @@
+// Candid interface for the CipherNest chat_backend canister
+
+type PreKeyBundle = record {
+  user: principal;
+  // Post-quantum public key (e.g. Kyber) - raw bytes
+  kyber_pub: blob;
+  // ECC / ECDH public key bytes (for hybrid key exchange)
+  ecdh_pub: blob;
+  // Signature public key (e.g. Dilithium)
+  dilithium_pub: blob;
+  // Signature over the bundle (signed by the corresponding signing key)
+  signature: blob;
+  // Unix timestamp (seconds) when the bundle was created
+  created_at: nat64;
+  // Optional expiration timestamp
+  expires_at: opt nat64;
+  // Optional human-readable metadata (e.g. device label)
+  note: opt text;
+};
+
+type MessageEnvelope = record {
+  // Message identifier (opaque text)
+  id: text;
+  // Sender principal
+  sender: principal;
+  // Recipient principal
+  recipient: principal;
+  // Encrypted payload (AES-256-GCM ciphertext + tag) as bytes
+  ciphertext: blob;
+  // Ephemeral public key used to derive shared secret (raw bytes)
+  ephemeral_pub: blob;
+  // Signature over the envelope (signed by sender signing key)
+  signature: blob;
+  // String identifier for the hybrid algorithm used (e.g. "Kyber+ECDH+A256GCM")
+  algorithm: text;
+  // Unix timestamp when message was created
+  created_at: nat64;
+  // Optional TTL in seconds (ephemeral message lifetime)
+  ttl_seconds: opt nat64;
+};
+
+service : {
+  // Register or update a user's PreKeyBundle. Returns a short status text.
+  register: (PreKeyBundle) -> (text);
+
+  // Retrieve a user's PreKeyBundle if present.
+  get_key_bundle: (principal) -> (opt PreKeyBundle) query;
+
+  // Submit an encrypted message envelope for delivery/routing.
+  send_message: (MessageEnvelope) -> ();
+
+  // Fetch messages for the caller. Returns all queued MessageEnvelope items.
+  receive_messages: () -> (vec MessageEnvelope);
+};

@@ -1,29 +1,16 @@
 {
+  "version": 1,
   "canisters": {
     "chat_backend": {
-      "main": "src/New_LPF_backend/main.mo",
-      "type": "motoko"
-    },
-    "chat_frontend": {
-      "dependencies": [
-        "chat_backend"
-      ],
-      "frontend": {
-        "entrypoint": "src/chat_frontend/src/index.html"
-      },
-      "source": [
-        "src/chat_frontend/assets",
-        "src/chat_frontend/src"
-      ],
-      "type": "assets"
+      "type": "custom",
+      "build": "bash -lc \"cd src/chat_backend && cargo build --target wasm32-unknown-unknown --release\"",
+      "wasm": "src/chat_backend/target/wasm32-unknown-unknown/release/chat_backend.wasm",
+      "candid": "src/chat_backend/canister.did"
     }
   },
-  "defaults": {
-    "build": {
-      "args": "",
-      "packtool": ""
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000"
     }
-  },
-  "output_env_file": ".env",
-  "version": 1
+  }
 }

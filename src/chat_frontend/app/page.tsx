@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { CryptoDemo } from "@/components/crypto-demo"
 import { RatchetDemo } from "@/components/ratchet-demo"
+import Link from "next/link"
 
 export default function Home() {
   return (
@@ -26,7 +27,9 @@ export default function Home() {
         </div>
         
         <div className="flex gap-2">
-          <Button variant="default">Send Message</Button>
+          <Link href="/chats">
+            <Button variant="default">Open Chats</Button>
+          </Link>
           <Button variant="outline">Connect Wallet</Button>
           <Button variant="secondary">Settings</Button>
         </div>

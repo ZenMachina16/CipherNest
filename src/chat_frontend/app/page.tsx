@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { CryptoDemo } from "@/components/crypto-demo"
+import { RatchetDemo } from "@/components/ratchet-demo"
 
 export default function Home() {
   return (
@@ -42,8 +43,9 @@ export default function Home() {
       </div>
 
       {/* Crypto Demo Section */}
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto space-y-8">
         <CryptoDemo />
+        <RatchetDemo />
       </div>
     </main>
   )

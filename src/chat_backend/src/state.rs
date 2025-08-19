@@ -25,8 +25,8 @@ impl State {
         let memory = DefaultMemoryImpl::default();
 
         // Namespaces are arbitrary byte prefixes used to separate maps in stable memory.
-        let users = StableBTreeMap::new(b"users", memory.clone());
-        let messages = StableBTreeMap::new(b"messages", memory);
+        let users = StableBTreeMap::new(memory.clone());
+        let messages = StableBTreeMap::new(memory);
 
         Self { users, messages }
     }
@@ -114,16 +114,16 @@ impl State {
 
         // Iterate through all message queues
         for (key, bytes) in self.messages.iter() {
-            if let Ok(mut messages): Result<Vec<MessageEnvelope>, _> = serde_json::from_slice(&bytes) {
-                let original_count = messages.len();
+            if let Ok(mut message_queue) = serde_json::from_slice::<Vec<MessageEnvelope>>(&bytes) {
+                let original_count = message_queue.len();
                 
                 // Filter out expired messages
-                messages.retain(|msg| {
+                message_queue.retain(|msg| {
                     let message_expires_at = msg.created_at + msg.ttl_seconds.unwrap_or(24 * 60 * 60);
                     message_expires_at > current_time
                 });
                 
-                let remaining_count = messages.len();
+                let remaining_count = message_queue.len();
                 let removed_count = original_count - remaining_count;
                 total_removed += removed_count as u32;
                 
@@ -132,7 +132,7 @@ impl State {
                     keys_to_remove.push(key.clone());
                 } else if removed_count > 0 {
                     // Some messages removed, update the queue
-                    if let Ok(updated_bytes) = serde_json::to_vec(&messages) {
+                    if let Ok(updated_bytes) = serde_json::to_vec(&message_queue) {
                         keys_to_update.push((key.clone(), updated_bytes));
                     }
                 }

@@ -4,7 +4,7 @@
     "chat_backend": {
       "type": "custom",
       "build": "bash -lc \"cd src/chat_backend && cargo build --target wasm32-unknown-unknown --release\"",
-      "wasm": "src/chat_backend/target/wasm32-unknown-unknown/release/chat_backend.wasm",
+      "wasm": "target/wasm32-unknown-unknown/release/chat_backend.wasm",
       "candid": "src/chat_backend/canister.did"
     }
   },

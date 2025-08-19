@@ -186,7 +186,7 @@ async function deriveSharedSecret(
   // Use Web Crypto API for HKDF
   const key = await crypto.subtle.importKey(
     'raw',
-    combinedInput,
+    new Uint8Array(combinedInput).buffer,
     'HKDF',
     false,
     ['deriveKey']
@@ -218,7 +218,7 @@ async function encryptMessage(
 ): Promise<{ ciphertext: Uint8Array; nonce: Uint8Array }> {
   const key = await crypto.subtle.importKey(
     'raw',
-    sharedSecret,
+    new Uint8Array(sharedSecret).buffer,
     'AES-GCM',
     false,
     ['encrypt']
@@ -250,7 +250,7 @@ async function decryptMessage(
 ): Promise<string> {
   const key = await crypto.subtle.importKey(
     'raw',
-    sharedSecret,
+    new Uint8Array(sharedSecret).buffer,
     'AES-GCM',
     false,
     ['decrypt']
@@ -398,7 +398,7 @@ export function validateUserIdentity(identity: UserIdentity): boolean {
  * Double Ratchet message header
  * Contains information needed for decryption and ratchet advancement
  */
-interface RatchetHeader {
+export interface RatchetHeader {
   dhPublicKey: Uint8Array;    // Current DH public key
   previousChainLength: number; // Number of messages in previous sending chain
   messageNumber: number;       // Message number in current sending chain
@@ -407,7 +407,7 @@ interface RatchetHeader {
 /**
  * Encrypted message with ratchet header
  */
-interface RatchetMessage {
+export interface RatchetMessage {
   header: RatchetHeader;
   ciphertext: Uint8Array;
 }
@@ -548,7 +548,7 @@ export class SecureSession {
     // Import the input key material
     const key = await crypto.subtle.importKey(
       'raw',
-      inputKeyMaterial,
+      new Uint8Array(inputKeyMaterial).buffer,
       'HKDF',
       false,
       ['deriveKey']
@@ -583,7 +583,7 @@ export class SecureSession {
   private async deriveMessageKey(chainKey: Uint8Array): Promise<Uint8Array> {
     const key = await crypto.subtle.importKey(
       'raw',
-      chainKey,
+      new Uint8Array(chainKey).buffer,
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign']
@@ -604,7 +604,7 @@ export class SecureSession {
   private async advanceChainKey(chainKey: Uint8Array): Promise<Uint8Array> {
     const key = await crypto.subtle.importKey(
       'raw',
-      chainKey,
+      new Uint8Array(chainKey).buffer,
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign']
@@ -897,16 +897,6 @@ export {
   deriveSharedSecret,
   encryptMessage,
   decryptMessage,
-  SecureSession,
 };
 
-export type {
-  UserIdentity,
-  KyberKeyPair,
-  DilithiumKeyPair,
-  ECDHKeyPair,
-  PreKeyBundleData,
-  EncryptedMessage,
-  RatchetHeader,
-  RatchetMessage,
-};
+

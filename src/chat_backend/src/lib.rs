@@ -5,7 +5,6 @@
 
 use ic_cdk::api::caller;
 use ic_cdk_macros::{heartbeat, init, query, update};
-use candid::Principal;
 
 mod state;
 mod types;
@@ -109,7 +108,6 @@ fn send_message(mut envelope: MessageEnvelope) {
     
     // Set automatic 24-hour expiration for ephemeral messaging
     let current_time = ic_cdk::api::time() / 1_000_000_000; // Convert nanoseconds to seconds
-    let expires_in_24h = current_time + (24 * 60 * 60); // 24 hours in seconds
     
     // Override any existing TTL with our 24-hour policy
     envelope.ttl_seconds = Some(24 * 60 * 60);

@@ -8,14 +8,15 @@ crate-type = ["cdylib"]
 
 [dependencies]
 # Internet Computer canister runtime & macros
-ic-cdk = { version = "0.8", features = ["macros"] }
-ic-cdk-macros = "0.3"
+ic-cdk = "0.8.3"
+ic-cdk-macros = "0.8.4"
+
 
 # Stable memory helpers
-ic-stable-structures = "0.6"
+ic-stable-structures = "0.6.9"
 
 # Candid interface and (de)serialization
-candid = "0.11"
+candid = "0.8.4"
 
 # Serde for JSON (de)serialization
 serde = { version = "1.0", features = ["derive"] }
@@ -27,7 +28,7 @@ serde_json = "1.0"
 # - `oqs` or `liboqs-sys` provide bindings to liboqs when available.
 
 pqcrypto-kyber = { version = "0.7", optional = true }
-pqcrypto-dilithium = { version = "0.7", optional = true }
+pqcrypto-dilithium = { version = "0.5", optional = true }
 oqs = { version = "0.7", optional = true }
 
 [features]

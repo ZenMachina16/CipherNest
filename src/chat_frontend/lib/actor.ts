@@ -28,10 +28,10 @@ export interface MessageEnvelope {
 
 // Actor interface matching our canister's methods
 export interface ChatBackendActor {
-  register: (bundle: PreKeyBundle) -> Promise<string>;
-  get_key_bundle: (user: Principal) -> Promise<[PreKeyBundle] | []>;
-  send_message: (envelope: MessageEnvelope) -> Promise<void>;
-  receive_messages: () -> Promise<MessageEnvelope[]>;
+  register: (bundle: PreKeyBundle) => Promise<string>;
+  get_key_bundle: (user: Principal) => Promise<[PreKeyBundle] | []>;
+  send_message: (envelope: MessageEnvelope) => Promise<void>;
+  receive_messages: () => Promise<MessageEnvelope[]>;
 }
 
 // Candid IDL factory for our chat_backend canister
@@ -129,7 +129,8 @@ export const chatBackend = {
   async getKeyBundle(user: Principal): Promise<PreKeyBundle | null> {
     const actor = getChatBackendActor();
     const result = await actor.get_key_bundle(user);
-    return result.length > 0 ? result[0] : null;
+    // Handle the Candid optional type: [PreKeyBundle] | []
+    return Array.isArray(result) && result.length > 0 ? result[0]! : null;
   },
 
   /**

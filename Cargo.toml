@@ -1,5 +1,9 @@
 [workspace]
 members = [
     "src/chat_backend",
-    "src/chat_frontend"
+    "src/crypto"
 ]
+resolver = "2"
+
+[workspace.dependencies]
+candid = "=0.8.4"

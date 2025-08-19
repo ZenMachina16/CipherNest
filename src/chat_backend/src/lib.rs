@@ -28,7 +28,7 @@ fn init() {
 /// - Dilithium public key for post-quantum signatures
 /// - Self-signature proving ownership of the private keys
 #[update]
-fn register(mut bundle: PreKeyBundle) -> Result<String, String> {
+fn register(mut bundle: PreKeyBundle) -> String {
     let caller_principal = caller();
     
     // Ensure the bundle's user field matches the caller's principal
@@ -37,19 +37,19 @@ fn register(mut bundle: PreKeyBundle) -> Result<String, String> {
     
     // Validate the bundle has required fields
     if bundle.kyber_pub.is_empty() {
-        return Err("Kyber public key cannot be empty".to_string());
+        return "Error: Kyber public key cannot be empty".to_string();
     }
     
     if bundle.ecdh_pub.is_empty() {
-        return Err("ECDH public key cannot be empty".to_string());
+        return "Error: ECDH public key cannot be empty".to_string();
     }
     
     if bundle.dilithium_pub.is_empty() {
-        return Err("Dilithium public key cannot be empty".to_string());
+        return "Error: Dilithium public key cannot be empty".to_string();
     }
     
     if bundle.signature.is_empty() {
-        return Err("Bundle signature cannot be empty".to_string());
+        return "Error: Bundle signature cannot be empty".to_string();
     }
     
     // Store the bundle in stable memory
@@ -57,7 +57,18 @@ fn register(mut bundle: PreKeyBundle) -> Result<String, String> {
         state.put_user(&bundle);
     });
     
-    Ok(format!("Successfully registered PreKeyBundle for user {}", caller_principal))
+    format!("Successfully registered PreKeyBundle for user {}", caller_principal)
+}
+
+/// Retrieve a user's PreKeyBundle if present
+/// 
+/// This query function allows users to fetch public keys needed for secure communication
+/// setup. It returns None if the user hasn't registered keys yet.
+#[query]
+fn get_key_bundle(user: candid::Principal) -> Option<PreKeyBundle> {
+    State::with(|state| {
+        state.get_user(&user)
+    })
 }
 
 /// Send an encrypted message to another user
@@ -66,34 +77,34 @@ fn register(mut bundle: PreKeyBundle) -> Result<String, String> {
 /// in the recipient's queue for 24 hours (ephemeral messaging). The canister acts as a 
 /// zero-knowledge router - it cannot decrypt the message contents.
 #[update]
-fn send_message(mut envelope: MessageEnvelope) -> Result<String, String> {
+fn send_message(mut envelope: MessageEnvelope) {
     let caller_principal = caller();
     
     // Verify that the caller matches the sender field in the envelope
     // This prevents users from spoofing messages from other users
     if envelope.sender != caller_principal {
-        return Err("Sender field must match caller principal".to_string());
+        ic_cdk::trap("Sender field must match caller principal");
     }
     
     // Validate required fields
     if envelope.id.is_empty() {
-        return Err("Message ID cannot be empty".to_string());
+        ic_cdk::trap("Message ID cannot be empty");
     }
     
     if envelope.ciphertext.is_empty() {
-        return Err("Message ciphertext cannot be empty".to_string());
+        ic_cdk::trap("Message ciphertext cannot be empty");
     }
     
     if envelope.ephemeral_pub.is_empty() {
-        return Err("Ephemeral public key cannot be empty".to_string());
+        ic_cdk::trap("Ephemeral public key cannot be empty");
     }
     
     if envelope.signature.is_empty() {
-        return Err("Message signature cannot be empty".to_string());
+        ic_cdk::trap("Message signature cannot be empty");
     }
     
     if envelope.algorithm.is_empty() {
-        return Err("Algorithm identifier cannot be empty".to_string());
+        ic_cdk::trap("Algorithm identifier cannot be empty");
     }
     
     // Set automatic 24-hour expiration for ephemeral messaging
@@ -112,12 +123,6 @@ fn send_message(mut envelope: MessageEnvelope) -> Result<String, String> {
     State::with(|state| {
         state.push_message(&envelope.recipient, &envelope);
     });
-    
-    Ok(format!(
-        "Message {} sent to {} (expires in 24 hours)", 
-        envelope.id, 
-        envelope.recipient
-    ))
 }
 
 /// Receive all messages for the caller

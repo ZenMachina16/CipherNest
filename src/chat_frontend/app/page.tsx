@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { CryptoDemo } from "@/components/crypto-demo"
 
 export default function Home() {
   return (
@@ -38,6 +39,11 @@ export default function Home() {
       
       <div className="text-center text-sm text-muted-foreground">
         <p>🔒 End-to-end encrypted • 🚀 Quantum-resistant • ⏱️ Auto-delete in 24h</p>
+      </div>
+
+      {/* Crypto Demo Section */}
+      <div className="max-w-4xl mx-auto">
+        <CryptoDemo />
       </div>
     </main>
   )

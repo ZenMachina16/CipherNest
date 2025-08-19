@@ -101,4 +101,54 @@ impl State {
             Vec::new()
         }
     }
+
+    /// Clean up expired messages from all user queues
+    /// 
+    /// This method iterates through all message queues and removes messages that have
+    /// exceeded their TTL (time-to-live). For CipherNest, this implements the 24-hour
+    /// ephemeral messaging policy.
+    pub fn cleanup_expired_messages(&mut self, current_time: u64) -> u32 {
+        let mut total_removed = 0u32;
+        let mut keys_to_update = Vec::new();
+        let mut keys_to_remove = Vec::new();
+
+        // Iterate through all message queues
+        for (key, bytes) in self.messages.iter() {
+            if let Ok(mut messages): Result<Vec<MessageEnvelope>, _> = serde_json::from_slice(&bytes) {
+                let original_count = messages.len();
+                
+                // Filter out expired messages
+                messages.retain(|msg| {
+                    let message_expires_at = msg.created_at + msg.ttl_seconds.unwrap_or(24 * 60 * 60);
+                    message_expires_at > current_time
+                });
+                
+                let remaining_count = messages.len();
+                let removed_count = original_count - remaining_count;
+                total_removed += removed_count as u32;
+                
+                if remaining_count == 0 {
+                    // No messages left, remove the entire queue
+                    keys_to_remove.push(key.clone());
+                } else if removed_count > 0 {
+                    // Some messages removed, update the queue
+                    if let Ok(updated_bytes) = serde_json::to_vec(&messages) {
+                        keys_to_update.push((key.clone(), updated_bytes));
+                    }
+                }
+            }
+        }
+
+        // Apply updates
+        for (key, updated_bytes) in keys_to_update {
+            let _ = self.messages.insert(key, updated_bytes);
+        }
+
+        // Remove empty queues
+        for key in keys_to_remove {
+            let _ = self.messages.remove(&key);
+        }
+
+        total_removed
+    }
 }

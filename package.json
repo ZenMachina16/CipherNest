@@ -6,12 +6,21 @@
     "src/*"
   ],
   "scripts": {
+    "setup": "./setup.sh",
+    "setup:clean": "./setup.sh --clean",
     "dev": "cd src/chat_frontend && pnpm run dev",
+    "dev:backend": "dfx start --background && dfx deploy chat_backend",
+    "dev:frontend": "cd src/chat_frontend && pnpm run dev",
     "build": "cd src/chat_frontend && pnpm run build",
+    "build:backend": "dfx build chat_backend",
     "start": "cd src/chat_frontend && pnpm run start",
     "lint": "cd src/chat_frontend && pnpm run lint || true",
     "format": "prettier --write .",
-    "typecheck": "tsc -p src/chat_frontend/tsconfig.json"
+    "typecheck": "tsc -p src/chat_frontend/tsconfig.json",
+    "stop": "dfx stop",
+    "clean": "dfx stop && rm -rf .dfx && cd src/chat_frontend && rm -rf .next node_modules",
+    "logs": "dfx canister logs chat_backend",
+    "status": "dfx canister status --all"
   },
   "dependencies": {
     "agent-js": "npm:@dfinity/agent@^0.12.0",

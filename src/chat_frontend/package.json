@@ -25,7 +25,8 @@
     "pqc-kyber": "^1.0.0",
     "pqc-dilithium": "^1.0.0",
     "tweetnacl": "^1.0.3",
-    "tweetnacl-util": "^0.15.1"
+    "tweetnacl-util": "^0.15.1",
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "typescript": "^5",

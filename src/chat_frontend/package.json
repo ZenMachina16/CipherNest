@@ -1,16 +1,11 @@
 {
-  "name": "ciphernest",
+  "name": "ciphernest-frontend",
   "version": "1.0.0",
-  "description": "CipherNest - Secure, Encrypted Communication Platform on the Internet Computer",
+  "type": "module",
   "scripts": {
-    "start": "dfx start --background",
-    "deploy": "dfx deploy",
-    "dev": "vite src/chat_frontend",
-    "build": "vite build src/chat_frontend",
-    "test": "dfx canister call chat_backend getMessages",
-    "setup": "./setup.sh",
-    "start-all": "./setup.sh",
-    "stop": "./stop.sh"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
@@ -36,9 +31,5 @@
     "buffer": "^6.0.3",
     "process": "^0.11.10",
     "vite": "^4.4.9"
-  },
-  "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=7.0.0"
   }
 }

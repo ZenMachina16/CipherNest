@@ -8,35 +8,25 @@ import {
   Text,
   Button,
   Image,
-  Icon,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { Icon } from '@chakra-ui/icons';
 
 const MotionBox = motion(Box);
 
 export default function Hero({ onGetStarted }) {
-  const { ref, inView } = useInView({
-    threshold: 0.3,
+  const [ref, inView] = useInView({
     triggerOnce: true,
+    threshold: 0.1,
   });
 
   return (
-    <Container maxW={'7xl'}>
+    <Container maxW={'7xl'} py={{ base: 10, sm: 20, lg: 32 }}>
       <Stack
         align={'center'}
         spacing={{ base: 8, md: 10 }}
-        py={{ base: 20, md: 28 }}
-        direction={{ base: 'column', md: 'row' }}>
-        <Stack flex={1} spacing={{ base: 5, md: 10 }}>
-          <Image
-            src="/src/assets/logo.png"
-            alt="CipherNest Logo"
-            width={{ base: "200px", md: "300px" }}
-            mb={6}
-            alignSelf="center"
-          />
         direction={{ base: 'column', md: 'row' }}
         ref={ref}
       >

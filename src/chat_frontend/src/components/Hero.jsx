@@ -51,7 +51,7 @@ export default function Hero({ onGetStarted }) {
                               <Text
                   fontSize="3xl"
                   fontWeight="bold"
-                  bgGradient="linear(to-r, #667eea, #764ba2, #f093fb, #f5576c, #4facfe)"
+                  bgGradient="linear(to-r,rgb(234, 203, 102),rgb(143, 162, 75),rgb(197, 251, 147),rgb(87, 245, 121), #4facfe)"
                   bgClip="text"
                   mb={6}
                 >
@@ -67,7 +67,7 @@ export default function Hero({ onGetStarted }) {
               >
                 <Text
                   as={'span'}
-                  bgGradient="linear(to-r, #667eea, #764ba2, #f093fb, #f5576c, #4facfe)"
+                  bgGradient="linear(to-r,rgb(234, 203, 102),rgb(143, 162, 75),rgb(197, 251, 147),rgb(87, 245, 121), #4facfe)"
                   bgClip="text"
                 >
                   Enterprise-Grade

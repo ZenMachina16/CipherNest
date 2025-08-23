@@ -28,11 +28,16 @@ const theme = extendTheme({
 });
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Check if user was previously authenticated
+    return localStorage.getItem('ciphernest_authenticated') === 'true';
+  });
   const toast = useToast();
 
   const handleLogin = () => {
     setIsAuthenticated(true);
+    // Persist authentication state
+    localStorage.setItem('ciphernest_authenticated', 'true');
     toast({
       title: "Authentication",
       description: "You are now signed in to CipherNest",
@@ -40,10 +45,17 @@ function App() {
       duration: 3000,
       isClosable: true,
     });
+    // Redirect to chat immediately after login
+    setTimeout(() => {
+      // Use window.location for now to avoid router issues
+      window.location.href = '/chat';
+    }, 1000);
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    // Clear authentication state
+    localStorage.removeItem('ciphernest_authenticated');
     toast({
       title: "Authentication",
       description: "You have been signed out",
@@ -77,12 +89,16 @@ function App() {
             <Route 
               path="/" 
               element={
-                <Box>
-                  <Hero onGetStarted={handleGetStarted} />
-                  <Features />
-                  <SecurityStats />
-                  <Footer />
-                </Box>
+                isAuthenticated ? (
+                  <Navigate to="/chat" replace />
+                ) : (
+                  <Box>
+                    <Hero onGetStarted={handleGetStarted} />
+                    <Features />
+                    <SecurityStats />
+                    <Footer />
+                  </Box>
+                )
               } 
             />
             <Route 

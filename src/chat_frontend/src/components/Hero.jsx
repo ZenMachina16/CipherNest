@@ -81,6 +81,12 @@ export default function Hero({ onGetStarted }) {
               fontWeight={'normal'}
               px={6}
               leftIcon={<Icon name="shield" />}
+              onClick={() => {
+                const featuresSection = document.querySelector('[data-section="features"]');
+                if (featuresSection) {
+                  featuresSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
             >
               Learn Security Features
             </Button>

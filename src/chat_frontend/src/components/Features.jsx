@@ -48,7 +48,7 @@ export default function Features() {
   const boxShadow = useColorModeValue('lg', 'dark-lg');
 
   return (
-    <Box p={4} mt={10}>
+    <Box p={4} mt={10} data-section="features">
       <Stack spacing={4} as={Container} maxW={'3xl'} textAlign={'center'}>
         <Heading fontSize={'3xl'}>Advanced Security Features</Heading>
         <Text color={'gray.600'} fontSize={'xl'}>

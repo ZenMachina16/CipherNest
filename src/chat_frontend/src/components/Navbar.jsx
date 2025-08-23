@@ -16,12 +16,14 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { FiUser, FiSettings, FiShield } from 'react-icons/fi';
+import { FiUser, FiSettings, FiShield, FiMessageCircle } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar({ isAuthenticated, onLogin, onLogout }) {
   const { colorMode, toggleColorMode } = useColorMode();
   const navBg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const navigate = useNavigate();
 
   return (
     <Box
@@ -65,6 +67,9 @@ export default function Navbar({ isAuthenticated, onLogin, onLogout }) {
                     size="sm"
                   />
                   <MenuList>
+                    <MenuItem icon={<FiMessageCircle />} onClick={() => navigate('/chat')}>
+                      Chat
+                    </MenuItem>
                     <MenuItem icon={<FiShield />}>Security Dashboard</MenuItem>
                     <MenuItem icon={<FiSettings />}>Settings</MenuItem>
                     <MenuItem onClick={onLogout}>Sign Out</MenuItem>

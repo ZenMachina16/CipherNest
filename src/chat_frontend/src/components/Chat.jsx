@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   VStack,
@@ -13,12 +13,26 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import ContactManager from './ContactManager';
 import ChatRoom from './ChatRoom';
+import { ChatDataService } from '../services/ChatDataService';
 
-const Chat = ({ actor }) => {
+const Chat = ({ actor, currentUser }) => {
   const [selectedContact, setSelectedContact] = useState(null);
-  const currentUserPrincipal = 'uxrrr-q7777-77774-qaaaq-cai'; // This would come from authentication
+  const currentUserPrincipal = currentUser?.principalId || 'uxrrr-q7777-77774-qaaaq-cai';
   const navigate = useNavigate();
 
+  // Refresh contacts when user changes
+  useEffect(() => {
+    if (currentUser) {
+      const userContacts = ChatDataService.getUserContactsList(currentUser.principalId);
+      // Force ContactManager to refresh by updating its key
+      setSelectedContact(null);
+    }
+  }, [currentUser]);
+
+  const bgGradient = useColorModeValue(
+    'linear(135deg, #43e97b 0%, #38f9d7 25%, #667eea 50%, #764ba2 75%, #f093fb 100%)',
+    'linear(135deg, #43e97b 0%, #38f9d7 25%, #667eea 50%, #764ba2 75%, #f093fb 100%)'
+  );
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
@@ -31,82 +45,88 @@ const Chat = ({ actor }) => {
   };
 
   return (
-    <Container maxW="container.xl" pt="20" h="100vh">
-      {/* Back to Home Button */}
-      <Box mb={4}>
-        <Button
-          leftIcon={<FiArrowLeft />}
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate('/')}
-          colorScheme="blue"
+    <Box bg={bgGradient} minH="100vh" pt="20" overflow="auto">
+      <Container maxW="container.xl" minH="calc(100vh - 80px)" py={4}>
+        {/* Back to Home Button */}
+        <Box mb={4}>
+          <Button
+            leftIcon={<FiArrowLeft />}
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/')}
+            bgGradient="linear(to-r, #667eea, #764ba2)"
+            color="white"
+            _hover={{ bgGradient: "linear(to-r, #764ba2, #f093fb)" }}
+          >
+            Back to Home
+          </Button>
+        </Box>
+        
+        <Box
+          minH="calc(100vh - 140px)"
+          borderWidth="1px"
+          borderRadius="lg"
+          overflow="hidden"
+          bg={bgColor}
+          boxShadow="xl"
+          borderColor={borderColor}
         >
-          Back to Home
-        </Button>
-      </Box>
-      
-      <Box
-        h="calc(100vh - 140px)"
-        borderWidth="1px"
-        borderRadius="lg"
-        overflow="hidden"
-        bg={bgColor}
-        boxShadow="lg"
-      >
-        <Flex h="100%">
-          {selectedContact ? (
-            // Show ChatRoom when a contact is selected
-            <ChatRoom 
-              contact={selectedContact}
-              onBack={handleBackToContacts}
-              currentUserPrincipal={currentUserPrincipal}
-            />
-          ) : (
-            // Show ContactManager when no contact is selected
-            <>
-              <ContactManager 
-                onContactSelect={handleContactSelect}
+          <Flex h="100%">
+            {selectedContact ? (
+              // Show ChatRoom when a contact is selected
+              <ChatRoom 
+                contact={selectedContact}
+                onBack={handleBackToContacts}
                 currentUserPrincipal={currentUserPrincipal}
               />
-              <Box flex="1" p={8}>
-                <VStack spacing={6} align="center" justify="center" h="100%">
-                  <Text fontSize="2xl" fontWeight="bold" color="gray.500">
-                    Welcome to CipherNest Chat
-                  </Text>
-                  <Text fontSize="lg" color="gray.400" textAlign="center" maxW="400px">
-                    Select a contact from the sidebar to start a secure conversation, 
-                    or add a new contact using their Principal ID.
-                  </Text>
-                  <Box
-                    p={6}
-                    bg={useColorModeValue('blue.50', 'blue.900')}
-                    borderRadius="lg"
-                    textAlign="center"
-                    maxW="500px"
-                  >
-                    <Text fontSize="sm" fontWeight="medium" mb={2}>
-                      💡 How to add contacts:
+            ) : (
+              // Show ContactManager when no contact is selected
+              <>
+                <ContactManager 
+                  key={currentUserPrincipal} // Force re-render when user changes
+                  onContactSelect={handleContactSelect}
+                  currentUserPrincipal={currentUserPrincipal}
+                />
+                <Box flex="1" p={8}>
+                  <VStack spacing={6} align="center" justify="center" h="100%">
+                    <Text fontSize="2xl" fontWeight="bold" color="gray.500">
+                      Welcome to CipherNest Chat
                     </Text>
-                    <Text fontSize="xs" color="gray.600">
-                      1. Click "Add Contact" in the sidebar
+                    <Text fontSize="lg" color="gray.400" textAlign="center" maxW="400px">
+                      Select a contact from the sidebar to start a secure conversation, 
+                      or add a new contact using their Principal ID.
                     </Text>
-                    <Text fontSize="xs" color="gray.600">
-                      2. Enter the contact's name and Principal ID
-                    </Text>
-                    <Text fontSize="xs" color="gray.600">
-                      3. Click "Add Contact" to save
-                    </Text>
-                    <Text fontSize="xs" color="gray.600">
-                      4. Click on any contact to start chatting
-                    </Text>
-                  </Box>
-                </VStack>
-              </Box>
-            </>
-          )}
-        </Flex>
-      </Box>
-    </Container>
+                    <Box
+                      p={6}
+                      bg={useColorModeValue('blue.50', 'blue.900')}
+                      borderRadius="lg"
+                      textAlign="center"
+                      maxW="500px"
+                    >
+                      <Text fontSize="sm" fontWeight="medium" mb={2}>
+                        💡 How to add contacts:
+                      </Text>
+                      <Text fontSize="xs" color="gray.600">
+                        1. Click "Add Contact" in the sidebar
+                      </Text>
+                      <Text fontSize="xs" color="gray.600">
+                        2. Enter the contact's name and Principal ID
+                      </Text>
+                      <Text fontSize="xs" color="gray.600">
+                        3. Click "Add Contact" to save
+                      </Text>
+                      <Text fontSize="xs" color="gray.600">
+                        4. Click on any contact to start chatting
+                      </Text>
+                    </Box>
+                  </VStack>
+                </Box>
+              </>
+            )}
+          </Flex>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

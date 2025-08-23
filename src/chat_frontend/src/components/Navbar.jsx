@@ -18,11 +18,14 @@ import {
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { FiUser, FiSettings, FiShield, FiMessageCircle } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import UserSimulator from './UserSimulator';
+import logo from '../../asset/logo.png';
 
-export default function Navbar({ isAuthenticated, onLogin, onLogout }) {
+export default function Navbar({ isAuthenticated, onLogin, onLogout, currentUser, onUserChange }) {
   const { colorMode, toggleColorMode } = useColorMode();
-  const navBg = useColorModeValue('white', 'gray.800');
+  const navBg = useColorModeValue('white', 'gray.900');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const logoBg = useColorModeValue('blue.500', 'blue.400');
   const navigate = useNavigate();
 
   return (
@@ -40,16 +43,33 @@ export default function Navbar({ isAuthenticated, onLogin, onLogout }) {
     >
       <Container maxW="container.xl">
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-          <Flex alignItems={'center'}>
-            <Image src="/logo.png" h={8} mr={2} />
-            <Text
-              fontSize="xl"
-              fontWeight="bold"
-              bgGradient="linear(to-r, cyan.400, blue.500, purple.600)"
-              bgClip="text"
+          <Flex alignItems={'center'} cursor="pointer" onClick={() => navigate('/')}>
+            <Box
+              bg="white"
+              p={2}
+              borderRadius="lg"
+              mr={3}
+              boxShadow="md"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              w={10}
+              h={10}
             >
-              CipherNest
-            </Text>
+              <Image src={logo} h={8} w={8} alt="CipherNest Logo" objectFit="contain" />
+            </Box>
+                          <Text
+                fontSize="xl"
+                fontWeight="bold"
+                bgGradient="linear(to-r, #667eea, #764ba2, #f093fb, #f5576c, #4facfe)"
+                bgClip="text"
+                _hover={{
+                  bgGradient: "linear(to-r, #764ba2, #f093fb, #f5576c, #4facfe, #667eea)",
+                }}
+                transition="all 0.3s"
+              >
+                CipherNest
+              </Text>
           </Flex>
 
           <Flex alignItems={'center'}>
@@ -57,6 +77,13 @@ export default function Navbar({ isAuthenticated, onLogin, onLogout }) {
               <Button onClick={toggleColorMode} size="sm">
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
+
+              {isAuthenticated && (
+                <UserSimulator 
+                  currentUser={currentUser}
+                  onUserChange={onUserChange}
+                />
+              )}
 
               {isAuthenticated ? (
                 <Menu>

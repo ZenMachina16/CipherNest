@@ -20,6 +20,7 @@ import {
 import { FiSend, FiLock, FiClock, FiMoreVertical, FiTrash2, FiArrowLeft, FiShield } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { ChatDataService } from '../services/ChatDataService';
 
 const MotionBox = motion(Box);
 
@@ -32,6 +33,8 @@ const ChatRoom = ({ contact, onBack, currentUserPrincipal }) => {
 
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const messageBg = useColorModeValue('blue.50', 'blue.900');
+  const otherMessageBg = useColorModeValue('gray.100', 'gray.700');
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -44,57 +47,24 @@ const ChatRoom = ({ contact, onBack, currentUserPrincipal }) => {
   // Load chat history for this contact
   useEffect(() => {
     if (contact) {
-      // Simulate loading chat history from the last 24 hours
-      const chatHistory = [
-        {
-          id: 1,
-          content: `Hello ${contact.name}! This is a secure message from the last 24 hours.`,
-          from: contact.principalId,
-          timestamp: Date.now() * 1000000 - 3600000000, // 1 hour ago
-          verified: true,
-          timeLeft: 82800, // 23 hours left
-          securityInfo: {
-            algorithm: "AES-256-GCM",
-            keyExchange: "ECDH-P384",
-            signatureType: "ECDSA-P384"
-          }
-        },
-        {
-          id: 2,
-          content: "Hi! Thanks for the secure message. The encryption is working perfectly.",
-          from: currentUserPrincipal,
-          timestamp: Date.now() * 1000000 - 1800000000, // 30 minutes ago
-          verified: true,
-          timeLeft: 84600, // 23.5 hours left
-          securityInfo: {
-            algorithm: "AES-256-GCM",
-            keyExchange: "ECDH-P384",
-            signatureType: "ECDSA-P384"
-          }
-        },
-        {
-          id: 3,
-          content: "This message will automatically expire in 24 hours for enhanced security.",
-          from: contact.principalId,
-          timestamp: Date.now() * 1000000 - 900000000, // 15 minutes ago
-          verified: true,
-          timeLeft: 85500, // 23.75 hours left
-          securityInfo: {
-            algorithm: "AES-256-GCM",
-            keyExchange: "ECDH-P384",
-            signatureType: "ECDSA-P384"
-          }
-        }
-      ];
+      // Load chat history from the service
+      const chatHistory = ChatDataService.getChatHistory(currentUserPrincipal, contact.principalId);
       setMessages(chatHistory);
     }
   }, [contact, currentUserPrincipal]);
+
+  // Refresh messages when user changes
+  useEffect(() => {
+    if (contact && currentUserPrincipal) {
+      const chatHistory = ChatDataService.getChatHistory(currentUserPrincipal, contact.principalId);
+      setMessages(chatHistory);
+    }
+  }, [currentUserPrincipal, contact]);
 
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
     
     const message = {
-      id: Date.now(),
       content: newMessage,
       from: currentUserPrincipal,
       timestamp: Date.now() * 1000000,
@@ -107,7 +77,9 @@ const ChatRoom = ({ contact, onBack, currentUserPrincipal }) => {
       }
     };
     
-    setMessages(prev => [...prev, message]);
+    // Add message to the service
+    const newMessageObj = ChatDataService.addMessage(currentUserPrincipal, contact.principalId, message);
+    setMessages(prev => [...prev, newMessageObj]);
     setNewMessage('');
   };
 
@@ -125,7 +97,9 @@ const ChatRoom = ({ contact, onBack, currentUserPrincipal }) => {
             variant="ghost"
             size="sm"
             onClick={onBack}
-            colorScheme="blue"
+            bgGradient="linear(to-r, #667eea, #764ba2)"
+            color="white"
+            _hover={{ bgGradient: "linear(to-r, #764ba2, #f093fb)" }}
           >
             Back to Contacts
           </Button>
@@ -136,6 +110,10 @@ const ChatRoom = ({ contact, onBack, currentUserPrincipal }) => {
               borderRadius="full"
               value={encryptionLevel}
               onChange={(e) => setEncryptionLevel(e.target.value)}
+              bgGradient="linear(to-r, #f093fb, #f5576c)"
+              color="white"
+              borderColor="#f093fb"
+              _hover={{ bgGradient: "linear(to-r, #f5576c, #4facfe)" }}
             >
               <option value="P-256">P-256 Encryption</option>
               <option value="P-384">P-384 Encryption</option>
@@ -170,15 +148,16 @@ const ChatRoom = ({ contact, onBack, currentUserPrincipal }) => {
               borderBottom="1px"
               borderColor={borderColor}
               justify="space-between"
-              bg={useColorModeValue('gray.50', 'gray.700')}
+              bgGradient="linear(to-r, #667eea, #764ba2)"
+              color="white"
             >
               <HStack>
                 <Avatar size="sm">
                   <AvatarBadge boxSize="1.25em" bg="green.500" />
                 </Avatar>
                 <VStack align="start" spacing={0}>
-                  <Text fontWeight="medium">{contact?.name}</Text>
-                  <Text fontSize="xs" color="gray.500" fontFamily="mono">
+                  <Text fontWeight="medium" color="white">{contact?.name}</Text>
+                  <Text fontSize="xs" color="white" fontFamily="mono" opacity="0.8">
                     {contact?.principalId}
                   </Text>
                 </VStack>
@@ -204,6 +183,7 @@ const ChatRoom = ({ contact, onBack, currentUserPrincipal }) => {
               h="calc(100% - 130px)"
               overflowY="auto"
               p={4}
+              bg={useColorModeValue('gray.50', 'gray.800')}
               css={{
                 '&::-webkit-scrollbar': {
                   width: '4px',
@@ -230,12 +210,15 @@ const ChatRoom = ({ contact, onBack, currentUserPrincipal }) => {
                       ml={msg.from === currentUserPrincipal ? 'auto' : '0'}
                     >
                       <Box
-                        bg={msg.from === currentUserPrincipal ? 'blue.500' : useColorModeValue('gray.100', 'gray.700')}
-                        color={msg.from === currentUserPrincipal ? 'white' : 'inherit'}
+                        bg={msg.from === currentUserPrincipal ? messageBg : otherMessageBg}
+                        color={msg.from === currentUserPrincipal ? 'blue.800' : useColorModeValue('gray.800', 'gray.200')}
                         px={4}
                         py={2}
                         borderRadius="lg"
                         position="relative"
+                        border="1px"
+                        borderColor={borderColor}
+                        boxShadow="sm"
                       >
                         <Text>{msg.content}</Text>
                         <HStack
@@ -302,18 +285,23 @@ const ChatRoom = ({ contact, onBack, currentUserPrincipal }) => {
               borderTop="1px"
               borderColor={borderColor}
               spacing={3}
+              bg={bgColor}
             >
               <Input
                 placeholder="Type a secure message..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                borderColor={borderColor}
+                _focus={{ borderColor: '#667eea', boxShadow: '0 0 0 1px #667eea' }}
               />
               <IconButton
-                colorScheme="blue"
+                bgGradient="linear(to-r, #667eea, #764ba2)"
+                color="white"
                 aria-label="Send message"
                 icon={<FiSend />}
                 onClick={sendMessage}
+                _hover={{ bgGradient: "linear(to-r, #764ba2, #f093fb)" }}
               />
             </HStack>
           </Box>

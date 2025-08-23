@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   VStack,
@@ -27,26 +27,21 @@ import {
 } from '@chakra-ui/react';
 import { FiUserPlus, FiMessageCircle, FiTrash2, FiUser } from 'react-icons/fi';
 import { motion } from 'framer-motion';
+import { ChatDataService } from '../services/ChatDataService';
 
 const MotionBox = motion(Box);
 
 const ContactManager = ({ onContactSelect, currentUserPrincipal }) => {
-  const [contacts, setContacts] = useState([
-    {
-      id: '1',
-      principalId: 'uxrrr-q7777-77774-qaaaq-cai',
-      name: 'Demo User 1',
-      status: 'online',
-      lastSeen: Date.now(),
-    },
-    {
-      id: '2', 
-      principalId: 'u6s2n-gx777-77774-qaaba-cai',
-      name: 'Demo User 2',
-      status: 'offline',
-      lastSeen: Date.now() - 3600000,
-    }
-  ]);
+  const [contacts, setContacts] = useState(() => {
+    // Get user-specific contacts from the service
+    return ChatDataService.getUserContactsList(currentUserPrincipal);
+  });
+
+  // Refresh contacts when user changes
+  useEffect(() => {
+    const userContacts = ChatDataService.getUserContactsList(currentUserPrincipal);
+    setContacts(userContacts);
+  }, [currentUserPrincipal]);
   const [newContactPrincipal, setNewContactPrincipal] = useState('');
   const [newContactName, setNewContactName] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -54,6 +49,8 @@ const ContactManager = ({ onContactSelect, currentUserPrincipal }) => {
 
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const hoverBg = useColorModeValue('gray.100', 'gray.600');
+  const cardBg = useColorModeValue('gray.50', 'gray.700');
 
   const addContact = () => {
     if (!newContactPrincipal.trim() || !newContactName.trim()) {
@@ -80,14 +77,16 @@ const ContactManager = ({ onContactSelect, currentUserPrincipal }) => {
     }
 
     const newContact = {
-      id: Date.now().toString(),
       principalId: newContactPrincipal,
       name: newContactName,
-      status: 'offline',
-      lastSeen: Date.now(),
+      status: 'online',
+      role: 'User',
+      avatar: '👤'
     };
 
-    setContacts(prev => [...prev, newContact]);
+    // Add contact using the service
+    const addedContact = ChatDataService.addUserContact(currentUserPrincipal, newContact);
+    setContacts(prev => [...prev, addedContact]);
     setNewContactPrincipal('');
     setNewContactName('');
     onClose();
@@ -102,7 +101,9 @@ const ContactManager = ({ onContactSelect, currentUserPrincipal }) => {
   };
 
   const removeContact = (contactId) => {
-    setContacts(prev => prev.filter(c => c.id !== contactId));
+    // Remove contact using the service
+    const updatedContacts = ChatDataService.removeUserContact(currentUserPrincipal, contactId);
+    setContacts(updatedContacts);
     toast({
       title: "Contact Removed",
       description: "Contact has been removed from your list",
@@ -127,11 +128,11 @@ const ContactManager = ({ onContactSelect, currentUserPrincipal }) => {
     >
       <VStack spacing={4} align="stretch" p={4}>
         {/* Current User Principal ID */}
-        <Box p={3} bg={useColorModeValue('blue.50', 'blue.900')} borderRadius="md">
-          <Text fontSize="xs" color="gray.500" mb={1}>
+        <Box p={3} bgGradient="linear(to-r, #667eea, #764ba2)" borderRadius="md" border="1px" borderColor={borderColor} color="white">
+          <Text fontSize="xs" color="white" mb={1} opacity="0.9">
             Your Principal ID
           </Text>
-          <Text fontSize="sm" fontWeight="medium" fontFamily="mono">
+          <Text fontSize="sm" fontWeight="medium" fontFamily="mono" color="white">
             {currentUserPrincipal || 'uxrrr-q7777-77774-qaaaq-cai'}
           </Text>
         </Box>
@@ -139,10 +140,12 @@ const ContactManager = ({ onContactSelect, currentUserPrincipal }) => {
         {/* Add Contact Button */}
         <Button
           leftIcon={<FiUserPlus />}
-          colorScheme="blue"
+          bgGradient="linear(to-r, #f093fb, #f5576c)"
+          color="white"
           size="sm"
           onClick={onOpen}
           borderRadius="full"
+          _hover={{ bgGradient: "linear(to-r, #f5576c, #4facfe)" }}
         >
           Add Contact
         </Button>
@@ -163,12 +166,17 @@ const ContactManager = ({ onContactSelect, currentUserPrincipal }) => {
             >
               <HStack
                 p={3}
-                bg={useColorModeValue('gray.50', 'gray.700')}
+                bg={cardBg}
                 borderRadius="md"
+                border="1px"
+                borderColor={borderColor}
                 cursor="pointer"
                 _hover={{
-                  bg: useColorModeValue('gray.100', 'gray.600'),
+                  bg: hoverBg,
+                  transform: 'translateY(-2px)',
+                  boxShadow: 'md',
                 }}
+                transition="all 0.2s"
                 onClick={() => handleContactClick(contact)}
               >
                 <Avatar size="sm">
@@ -206,7 +214,7 @@ const ContactManager = ({ onContactSelect, currentUserPrincipal }) => {
                       colorScheme="red"
                       onClick={(e) => {
                         e.stopPropagation();
-                        removeContact(contact.id);
+                        removeContact(contact.principalId);
                       }}
                     />
                   </Tooltip>

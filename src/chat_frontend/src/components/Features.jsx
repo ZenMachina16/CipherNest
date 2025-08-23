@@ -44,51 +44,111 @@ const features = [
 ];
 
 export default function Features() {
+  const bgGradient = useColorModeValue(
+    'linear(135deg, #f093fb 0%, #f5576c 25%, #4facfe 50%, #00f2fe 75%, #43e97b 100%)',
+    'linear(135deg, #f093fb 0%, #f5576c 25%, #4facfe 50%, #00f2fe 75%, #43e97b 100%)'
+  );
   const bgBox = useColorModeValue('white', 'gray.800');
   const boxShadow = useColorModeValue('lg', 'dark-lg');
+  const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const textColor = useColorModeValue('gray.600', 'gray.300');
 
   return (
-    <Box p={4} mt={10} data-section="features">
-      <Stack spacing={4} as={Container} maxW={'3xl'} textAlign={'center'}>
-        <Heading fontSize={'3xl'}>Advanced Security Features</Heading>
-        <Text color={'gray.600'} fontSize={'xl'}>
-          CipherNest combines cutting-edge cryptography with user-friendly design
-          to provide the most secure messaging experience.
-        </Text>
-      </Stack>
+    <Box bg={bgGradient} py={24} data-section="features">
+      <Container maxW={'7xl'}>
+        <Stack spacing={8} textAlign={'center'} mb={16}>
+          <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }} fontWeight="bold">
+            Enterprise Security Features
+          </Heading>
+          <Text color={textColor} fontSize={{ base: 'lg', md: 'xl' }} maxW="600px" mx="auto">
+            Built for enterprises that demand the highest level of security. 
+            CipherNest provides military-grade encryption with zero compromise on usability.
+          </Text>
+        </Stack>
 
-      <Container maxW={'6xl'} mt={10}>
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
           {features.map((feature) => (
             <MotionBox
               key={feature.id}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02, y: -5 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2 }}
             >
-              <HStack
-                align={'top'}
+              <Box
                 p={8}
                 bg={bgBox}
                 boxShadow={boxShadow}
-                rounded={'xl'}
-                _hover={{
-                  transform: 'translateY(-5px)',
-                  transition: 'all 0.2s ease-in-out',
-                }}
+                border="1px"
+                borderColor={borderColor}
+                rounded={'2xl'}
+                h="full"
+                                  _hover={{
+                    boxShadow: '2xl',
+                    borderColor: '#667eea',
+                  }}
+                transition="all 0.3s ease"
               >
-                <Box color={'blue.400'} px={2}>
-                  <Icon as={feature.icon} w={10} h={10} />
-                </Box>
-                <VStack align={'start'}>
-                  <Text fontWeight={600} fontSize={'lg'}>
-                    {feature.title}
-                  </Text>
-                  <Text color={'gray.600'}>{feature.text}</Text>
+                <VStack align={'start'} spacing={4} h="full">
+                  <Box 
+                    color={'white'} 
+                    p={3}
+                    bgGradient="linear(to-r, #667eea, #764ba2)"
+                    borderRadius="xl"
+                  >
+                    <Icon as={feature.icon} w={8} h={8} />
+                  </Box>
+                  <VStack align={'start'} spacing={2} flex={1}>
+                    <Text fontWeight={700} fontSize={'xl'}>
+                      {feature.title}
+                    </Text>
+                    <Text color={textColor} lineHeight="tall">
+                      {feature.text}
+                    </Text>
+                  </VStack>
                 </VStack>
-              </HStack>
+              </Box>
             </MotionBox>
           ))}
         </SimpleGrid>
+
+        {/* Enterprise Stats */}
+        <Box mt={20} p={8} bg={bgBox} borderRadius="2xl" border="1px" borderColor={borderColor}>
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8} textAlign="center">
+            <VStack spacing={2}>
+              <Text fontSize="4xl" fontWeight="bold" bgGradient="linear(to-r, #667eea, #764ba2)" bgClip="text">
+                99.99%
+              </Text>
+              <Text fontSize="lg" fontWeight="medium">
+                Uptime SLA
+              </Text>
+              <Text fontSize="sm" color={textColor}>
+                Guaranteed availability for enterprise customers
+              </Text>
+            </VStack>
+            <VStack spacing={2}>
+              <Text fontSize="4xl" fontWeight="bold" bgGradient="linear(to-r, #f093fb, #f5576c)" bgClip="text">
+                256-bit
+              </Text>
+              <Text fontSize="lg" fontWeight="medium">
+                AES Encryption
+              </Text>
+              <Text fontSize="sm" color={textColor}>
+                Military-grade encryption standard
+              </Text>
+            </VStack>
+            <VStack spacing={2}>
+              <Text fontSize="4xl" fontWeight="bold" bgGradient="linear(to-r, #4facfe, #00f2fe)" bgClip="text">
+                &lt; 50ms
+              </Text>
+              <Text fontSize="lg" fontWeight="medium">
+                Message Delivery
+              </Text>
+              <Text fontSize="sm" color={textColor}>
+                Ultra-fast message transmission
+              </Text>
+            </VStack>
+          </SimpleGrid>
+        </Box>
       </Container>
     </Box>
   );

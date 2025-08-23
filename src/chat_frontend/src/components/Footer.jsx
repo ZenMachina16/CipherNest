@@ -8,13 +8,15 @@ import {
   Link,
   useColorModeValue,
   Image,
+  HStack,
 } from '@chakra-ui/react';
+import logo from '../../asset/logo.png';
 
 export default function Footer() {
   return (
     <Box
-      bg={useColorModeValue('gray.50', 'gray.900')}
-      color={useColorModeValue('gray.700', 'gray.200')}
+      bgGradient="linear(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%)"
+      color="white"
       mt={10}
     >
       <Container as={Stack} maxW={'6xl'} py={10}>
@@ -24,16 +26,29 @@ export default function Footer() {
         >
           <Stack spacing={6}>
             <Box>
-              <Image src="/logo.png" h={8} />
-              <Text
-                fontSize="lg"
-                fontWeight="bold"
-                bgGradient="linear(to-r, cyan.400, blue.500, purple.600)"
-                bgClip="text"
-                mt={2}
-              >
-                CipherNest
-              </Text>
+              <HStack spacing={3}>
+                <Box
+                  bg="white"
+                  p={2}
+                  borderRadius="xl"
+                  boxShadow="lg"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  w={10}
+                  h={10}
+                >
+                  <Image src={logo} h={6} w={6} alt="CipherNest Logo" objectFit="contain" />
+                </Box>
+                <Text
+                  fontSize="lg"
+                  fontWeight="bold"
+                  color="white"
+                  textShadow="1px 1px 2px rgba(0,0,0,0.3)"
+                >
+                  CipherNest
+                </Text>
+              </HStack>
             </Box>
             <Text fontSize={'sm'}>
               © 2025 CipherNest. All rights reserved
